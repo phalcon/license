@@ -12,7 +12,6 @@
 
 ## Phalcon License
 The content of <a href="https://license.phalconphp.com/">license.phalconphp.com</a>
-## Phalcon Blog
 
 Phalcon PHP is a web framework delivered as a C extension providing high performance and lower resource consumption.
 
