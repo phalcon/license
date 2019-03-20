@@ -11,4 +11,4 @@
 </p>
 
 ## Phalcon License
-The content of <a href="https://license.phalconphp.com/">license.phalconphp.com</a
+The content of <a href="https://license.phalconphp.com/">license.phalconphp.com</a>
