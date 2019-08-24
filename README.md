@@ -1,4 +1,4 @@
-<p align="center"><a href="https://docs.phalconphp.com" target="_blank">
+<p align="center"><a href="https://docs.phalcon.io" target="_blank">
     <img src="https://assets.phalcon.io/phalcon/images/svg/phalcon-logo-transparent-black.svg" height="100" alt="Phalcon"/>
 </a></p>
 
