@@ -1,0 +1,3 @@
+[build]
+  command = "php updateSponsors.php && jekyll build && jekyll algolia && jekyll build --incremental"
+  publish = "_site/"
