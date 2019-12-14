@@ -5,18 +5,18 @@ app:
   description: 'Licenses governing the Phalcon Framework'
   keywords: 'phalcon, phalconpphp, zephir, license'
   avatar: https://avatars3.githubusercontent.com/u/1221505?v=4
+  baseurl: "/"
+  analytics: 'UA-133802124-4'
 
 url: https://license.phalcon.io
 
+url: https://license.phalcon.io
 social:
   email: team@phalcon.io
   facebook:
   github: phalcon
   rss: phalcon
   twitter: phalconphp
-
-meta:
-  analytics: 'UA-133802124-4'
 
 permalink: /:title
 
@@ -38,10 +38,12 @@ kramdown:
   smart_quotes: lsquo,rsquo,ldquo,rdquo
   enable_coderay: false
 
+# Exclude these files from your production _site
 exclude:
-  - vendor
   - Gemfile
   - Gemfile.lock
   - LICENSE
   - README.md
+  - vendor
   - serve
+  - updateData.php
