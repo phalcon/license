@@ -7,6 +7,8 @@ app:
   avatar: https://avatars3.githubusercontent.com/u/1221505?v=4
   baseurl: "/"
   analytics: 'G-XRDKDE3CTC'
+  cloudflare:
+    analytics: 'a97087f228c541ac82f7134f1748af08'
 
 url: https://license.phalcon.io
 social:
