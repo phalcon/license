@@ -14,6 +14,3 @@ wget -O "$BUILD_BASE/_includes/footer.html" "$INPUT_BASE/footer-fragment.html"
 
 echo "Building Site"
 jekyll build
-
-echo "Copying Redirects"
-cp _redirects _site/_redirects
