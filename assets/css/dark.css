@@ -86,12 +86,12 @@
 [color-scheme="dark"] ol li,
 [color-scheme="dark"] .phalcon-blog__title,
 [color-scheme="dark"] .phalcon-blog__projects-text,
-[color-scheme="dark"] .phalcon-blog__sponsors-item span,
 [color-scheme="dark"] .footer-nav li a {
     color: #e2e4e9d1;
 }
 
-[color-scheme="dark"] .phalcon-blog a {
+[color-scheme="dark"] .phalcon-blog a,
+[color-scheme="dark"] .phalcon-blog__sponsors-item span {
     color: #00bda4;
 }
 
@@ -110,5 +110,12 @@
 
 [color-scheme="dark"] .footer__supported-logo svg{
     stroke: #ffffff;
-    fill: #ffffff;
+}
+
+[color-scheme="dark"] .footer__supported-logo svg path {
+    stroke: #ffffff;
+}
+
+[color-scheme="dark"] .phalcon-blog__sponsors-item:hover {
+    border-color: #00bda4;
 }
