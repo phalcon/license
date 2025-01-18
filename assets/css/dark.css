@@ -90,8 +90,7 @@
     color: #e2e4e9d1;
 }
 
-[color-scheme="dark"] .phalcon-blog a,
-[color-scheme="dark"] .phalcon-blog__sponsors-item span {
+[color-scheme="dark"] .phalcon-blog a {
     color: #00bda4;
 }
 
@@ -118,4 +117,8 @@
 
 [color-scheme="dark"] .phalcon-blog__sponsors-item:hover {
     border-color: #00bda4;
+}
+
+[color-scheme="dark"] .phalcon-blog__sponsors-item span {
+    color: #000000;
 }
