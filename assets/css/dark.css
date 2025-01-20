@@ -147,7 +147,7 @@
 [color-scheme="dark"] .header-nav>li.active>a,
 [color-scheme="dark"] .header-nav>li:hover>a,
 [color-scheme="dark"] .header-dropdown li a:hover,
-[color-scheme="dark"] .footer-nav li a {
+[color-scheme="dark"] .footer-nav li a:hover {
     opacity: 1;
     color: #ffffff;
 }
