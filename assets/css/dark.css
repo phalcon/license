@@ -108,14 +108,12 @@
 }
 
 [color-scheme="dark"] .footer__license,
-[color-scheme="dark"] .footer__supported span {
+[color-scheme="dark"] .footer__supported span,
+[color-scheme="dark"] .footer-nav li a {
     color: #ffffff;
 }
 
-[color-scheme="dark"] .footer__supported-logo svg{
-    stroke: #ffffff;
-}
-
+[color-scheme="dark"] .footer__supported-logo svg,
 [color-scheme="dark"] .footer__supported-logo svg path {
     stroke: #ffffff;
 }
