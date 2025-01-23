@@ -60,6 +60,13 @@
     .light-dark-auto-switcher {
         display: none;
     }
+
+    .header-nav--mobile .light-dark-auto-switcher {
+        display: flex;
+        margin-left: 0;
+        margin-bottom: 25px;
+        margin-top: 5px;
+    }
 }
 
 .light-dark-auto-button {
