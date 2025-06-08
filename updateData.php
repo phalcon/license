@@ -1,6 +1,6 @@
 <?php
 
-$base      = "/opt/build/repo/";
+$base      = "/home/runner/work/license/license/";
 echo "Updating Sponsors" . PHP_EOL;
 
 $data = file_get_contents(
