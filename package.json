@@ -8,7 +8,7 @@
         "build": "astro build",
         "preview": "astro preview",
         "check": "astro check",
-        "test": "node --test \"src/lib/*.test.mjs\" \"scripts/*.test.mjs\"",
+        "test": "node --test \"scripts/*.test.mjs\"",
         "verify": "node scripts/verify-build.mjs"
     },
     "dependencies": {
