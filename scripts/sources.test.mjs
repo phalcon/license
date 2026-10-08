@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { footerProblems, missingTokens, sidebarProblems } from '../src/lib/design-checks.mjs';
+import { cphalconStars } from '../src/lib/stars.mjs';
 import { sourceFiles, usedBySite } from './token-sources.mjs';
 
 const root = new URL('../', import.meta.url);
@@ -227,9 +228,10 @@ test('site.css sets its text sizes in rem, so that they follow the default size 
     assert.deepEqual([...css.matchAll(/(?:font-size|line-height)\s*:\s*[^;]*\dpx/g)].map((match) => match[0]), []);
 });
 
-test('the CI workflow runs one deploy at a time, as phalcon.io does', () => {
+test('the CI workflow runs one deploy at a time on each branch, as phalcon.io does', () => {
     // Two pushes close together must not let the older build publish last.
-    assert.match(read('.github/workflows/main.yml'), /\nconcurrency:\n {2}group: deploy\n {2}cancel-in-progress: false\n/);
+    // A group keeps only one waiting run, so a pull request run must not cancel a waiting master run.
+    assert.match(read('.github/workflows/main.yml'), /\nconcurrency:\n {2}group: deploy-\$\{\{ github\.ref \}\}\n {2}cancel-in-progress: false\n/);
 });
 
 test('the CI workflow keeps the committed design tools when a new file lacks one of their exports', () => {
@@ -238,4 +240,9 @@ test('the CI workflow keeps the committed design tools when a new file lacks one
 
     assert.match(workflow, /node --check "\$new" \\\n\s+&& node --input-type=module -e "\$EXPORTS" "\$new" "src\/lib\/\$file"; then/);
     assert.match(workflow, /Object\.keys\(last\)\.every\(\(name\) => name in next\)/);
+});
+
+test('the committed repositories.json has a star count for cphalcon', () => {
+    // The nav reads this copy at build time. The refresh replaces it only with a file that has a count.
+    assert.notEqual(cphalconStars(read('src/repositories.json')), null);
 });
