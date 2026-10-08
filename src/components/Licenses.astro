@@ -1,0 +1,109 @@
+---
+/*
+ * The licenses of the projects that parts of Phalcon come from or follow
+ * (src/licenses.json). Each group has a section with its list, then one box
+ * for each project, in alphabetical order. The PSR projects come last. A box
+ * has the license type, the copyright lines, the parts of Phalcon, the links,
+ * and the full text in a details element (closed).
+ */
+import data from '../licenses.json';
+
+interface Project {
+    license: string;
+    licenseUrl: string;
+    name: string;
+    parts: string[];
+    text: string;
+    url: string;
+}
+
+type Block = { items: string[] } | { text: string };
+
+const byName = (a: Project, b: Project): number => a.name.localeCompare(b.name, 'en', { sensitivity: 'base' });
+
+const groups = [
+    {
+        intro: 'Parts of Phalcon have been influenced or adapted from the projects below. Each box has the license of one project.',
+        projects: [...data.projects].sort(byName),
+        title: 'Additional Licenses',
+    },
+    {
+        intro: 'PSR related parts of Phalcon have been influenced by the projects below.',
+        projects: [...data.psr].sort(byName),
+        title: 'Phalcon and PSR',
+    },
+];
+
+/** The id of a box: the name in lower case, with a hyphen for each other character. */
+const id = (name: string): string => name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+/** The copyright lines of a license text. */
+const copyrights = (text: string): string[] =>
+    text.split('\n').map((line) => line.trim()).filter((line) => line.startsWith('Copyright (c) '));
+
+/*
+ * The text in blocks: a paragraph for each part between blank lines, with its
+ * lines joined. A part that starts with "- " or "* " is a list, with an item
+ * for each of those lines; lists next to each other become one list.
+ */
+const blocks = (text: string): Block[] => {
+    const result: Block[] = [];
+
+    for (const part of text.split(/\n\s*\n/)) {
+        const lines = part.split('\n').map((line) => line.trim());
+
+        if (!/^[-*] /.test(lines[0])) {
+            result.push({ text: lines.join(' ') });
+            continue;
+        }
+
+        const items: string[] = [];
+
+        for (const line of lines) {
+            if (/^[-*] /.test(line)) {
+                items.push(line.slice(2));
+            } else {
+                items[items.length - 1] += ` ${line}`;
+            }
+        }
+
+        const last = result[result.length - 1];
+
+        if (last !== undefined && 'items' in last) {
+            last.items.push(...items);
+        } else {
+            result.push({ items });
+        }
+    }
+
+    return result;
+};
+---
+
+{groups.map((group) => (
+    <>
+        <section class="license">
+            <h2>{group.title}</h2>
+            <p>{group.intro}</p>
+            <ul>
+                {group.projects.map((project) => (
+                    <li><a href={`#${id(project.name)}`}>{project.name}</a> ({project.license})</li>
+                ))}
+            </ul>
+        </section>
+        {group.projects.map((project) => (
+            <section class="license" id={id(project.name)}>
+                <h3>{project.name} <span class="license__type">{project.license}</span></h3>
+                {copyrights(project.text).map((line) => <p>{line}</p>)}
+                <p>Parts of Phalcon: {project.parts.map((part, index) => <>{index > 0 && ', '}<code>{part}</code></>)}</p>
+                <p><a href={project.url}>Source</a> · <a href={project.licenseUrl}>License file</a></p>
+                <details>
+                    <summary>The full license text</summary>
+                    {blocks(project.text).map((block) => ('items' in block
+                        ? <ul>{block.items.map((item) => <li>{item}</li>)}</ul>
+                        : <p>{block.text}</p>))}
+                </details>
+            </section>
+        ))}
+    </>
+))}
