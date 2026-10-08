@@ -187,6 +187,8 @@ count(
     measure(() => /<link rel="canonical" href="([^"]*)"/.exec(html('dist/index.html'))?.[1] ?? 'none'),
     'https://license.phalcon.io/'
 );
+/* Each page has one h1: the name of the page for screen readers and search engines. */
+count('pages without exactly one h1', measure(() => pages.filter((file) => (html(file).match(/<h1[\s>]/g) ?? []).length !== 1).length), 0);
 
 /* The files that the Jekyll site served stay at their addresses. */
 for (const path of [

@@ -77,7 +77,7 @@ test('the CI workflow gets the design tools first, and keeps the committed copy 
     assert.ok(step < workflow.indexOf('run: node scripts/update-tokens.mjs'), 'the step must come before the design files');
     assert.match(workflow, /for file in design-checks\.mjs design-refresh\.mjs; do/);
     assert.match(workflow, /new="src\/lib\/\$\{file%\.mjs\}\.new\.mjs"/);
-    assert.match(workflow, /curl -fsSL --max-time 30 -o "\$new" "https:\/\/assets\.phalcon\.io\/phalcon\/tools\/\$file" && node --check "\$new"; then/);
+    assert.match(workflow, /curl -fsSL --max-time 30 -o "\$new" "https:\/\/assets\.phalcon\.io\/phalcon\/tools\/\$file" && node --check "\$new"/);
 });
 
 test('the CI workflow publishes the build to the production branch, which Cloudflare Pages serves', () => {
@@ -210,4 +210,32 @@ test('the license type of each project agrees with its text', () => {
 
         assert.equal(entry.license, type, entry.name);
     }
+});
+
+test('the theme switcher shows a ring for the keyboard focus', () => {
+    // WCAG 2.4.7: a keyboard user sees where the focus is. A mouse click shows no ring (:focus-visible).
+    const css = read('public/css/site.css');
+
+    assert.doesNotMatch(/\.switcher button \{[^}]*\}/.exec(css)?.[0] ?? '', /outline:\s*none/);
+    assert.match(css, /\.switcher button:focus-visible \{\s*outline: 2px solid var\(--ph-white\);\s*outline-offset: 2px;\s*\}/);
+});
+
+test('site.css sets its text sizes in rem, so that they follow the default size of the reader', () => {
+    // A px size stays the same when the reader sets a larger default font size in the browser.
+    const css = read('public/css/site.css').replace(/\/\*[\s\S]*?\*\//g, '');
+
+    assert.deepEqual([...css.matchAll(/(?:font-size|line-height)\s*:\s*[^;]*\dpx/g)].map((match) => match[0]), []);
+});
+
+test('the CI workflow runs one deploy at a time, as phalcon.io does', () => {
+    // Two pushes close together must not let the older build publish last.
+    assert.match(read('.github/workflows/main.yml'), /\nconcurrency:\n {2}group: deploy\n {2}cancel-in-progress: false\n/);
+});
+
+test('the CI workflow keeps the committed design tools when a new file lacks one of their exports', () => {
+    // The site imports the functions by name: a new file with an export less would stop the refresh.
+    const workflow = read('.github/workflows/main.yml');
+
+    assert.match(workflow, /node --check "\$new" \\\n\s+&& node --input-type=module -e "\$EXPORTS" "\$new" "src\/lib\/\$file"; then/);
+    assert.match(workflow, /Object\.keys\(last\)\.every\(\(name\) => name in next\)/);
 });
