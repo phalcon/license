@@ -13,6 +13,12 @@ export default defineConfig({
         format: 'file',
     },
     trailingSlash: 'never',
+    /*
+     * Astro 7 removes whitespace by JSX rules: the line break between a word
+     * and the link on the next line goes, and the two words touch. The HTML
+     * compression of Astro 5 keeps one space there.
+     */
+    compressHTML: true,
     server: {
         host: true,
         port: 4321,
