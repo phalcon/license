@@ -285,3 +285,13 @@ test('the social card address has a version, so that platforms fetch a new card'
     // A platform (Discord, X, LinkedIn) keeps a preview image by its address. Change the version when the card changes.
     assert.match(read('src/site.ts'), /\n {4}image: 'https:\/\/assets\.phalcon\.io\/phalcon\/social\/github\.phalcon\.license\.png\?v=2',\n/);
 });
+
+test('Built with Phalcon links to the page on phalcon.io', () => {
+    // The page replaces builtwith.phalcon.io (2026-10-14). src/footer.json is the committed copy of phalcon/footer.json.
+    for (const file of ['src/components/Header.astro', 'src/footer.json']) {
+        const source = read(file);
+
+        assert.match(source, /["']Built with Phalcon["'], ["']?href["']?: ["']https:\/\/phalcon\.io\/built-with["']/, file);
+        assert.doesNotMatch(source, /builtwith\.phalcon\.io/, file);
+    }
+});
