@@ -3,9 +3,9 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-import { footerProblems, missingTokens, sidebarProblems } from '../src/lib/design-checks.mjs';
+import { footerProblems, icoProblems, missingTokens, pngProblems, sidebarProblems, svgProblems } from '../src/lib/design-checks.mjs';
 import { cphalconStars } from '../src/lib/stars.mjs';
-import { sourceFiles, usedBySite } from './token-sources.mjs';
+import { sourceFiles, tokensIn, usedBySite } from './token-sources.mjs';
 
 const root = new URL('../', import.meta.url);
 const read = (file) => readFileSync(new URL(file, root), 'utf8');
@@ -41,12 +41,10 @@ test('the tokens file defines every token that the site uses', () => {
 });
 
 test('the source scan counts a token that a component reads by name', () => {
-    // Meta.astro gives --ph-brand-400 and --ph-dark-bg to resolveToken(), for the browser colors. No stylesheet uses
-    // --ph-brand-400, so it shows that the scan counts a name in quotes.
-    const used = usedBySite();
-
-    assert.ok(used.has('--ph-brand-400'), '--ph-brand-400');
-    assert.ok(used.has('--ph-dark-bg'), '--ph-dark-bg');
+    // Meta.astro and site.webmanifest.ts give --ph-dark-bg to resolveToken(), for the browser bar. A text with a token
+    // only in quotes shows that the scan counts a name.
+    assert.deepEqual([...tokensIn("resolveToken(tokens, '--ph-only-named'); color: var(--ph-in-var);")].sort(), ['--ph-in-var', '--ph-only-named']);
+    assert.ok(usedBySite().has('--ph-dark-bg'), '--ph-dark-bg');
 });
 
 test('the CI workflow gets the design files before the tests', () => {
@@ -114,6 +112,35 @@ test('the refresh script copies the shared files and checks each one', () => {
         script.indexOf("copy: 'public/css/tokens.css'") < Math.min(script.indexOf("copy: 'public/css/common.css'"), script.indexOf("copy: 'public/css/sidebar.css'")),
         'the tokens must come before common.css and sidebar.css',
     );
+});
+
+test('the refresh script copies the icons of phalcon/assets as bytes, and checks each one', () => {
+    // An icon is an image: refresh() must read, compare and write its bytes (binary: true). The copies are at the root
+    // of the site, where browsers and other clients ask for /favicon.ico.
+    const script = read('scripts/update-tokens.mjs');
+    const entries = [
+        ['public/favicon.ico', 'favicons/favicon.ico', 'icoProblems'],
+        ['public/favicon.svg', 'favicons/favicon.svg', 'svgProblems'],
+        ['public/apple-touch-icon.png', 'favicons/apple-touch-icon.png', '(bytes) => pngProblems(bytes, 180)'],
+        ['public/android-chrome-192x192.png', 'favicons/android-chrome-192x192.png', '(bytes) => pngProblems(bytes, 192)'],
+        ['public/android-chrome-512x512.png', 'favicons/android-chrome-512x512.png', '(bytes) => pngProblems(bytes, 512)'],
+    ];
+
+    for (const [copy, name, check] of entries) {
+        assert.ok(script.includes(`binary: true,\n            copy: '${copy}',\n            name: '${name}',\n            problems: ${check},`), copy);
+    }
+});
+
+test('the committed icon copies are icons that this site can use', () => {
+    // Only the shape: the icons change in phalcon/assets, and the deploy must accept them. The root of the site serves
+    // them, so a failed download must leave a copy there.
+    const icon = (file) => readFileSync(new URL(`public/${file}`, root));
+
+    assert.deepEqual(icoProblems(icon('favicon.ico')), []);
+    assert.deepEqual(svgProblems(icon('favicon.svg')), []);
+    assert.deepEqual(pngProblems(icon('apple-touch-icon.png'), 180), []);
+    assert.deepEqual(pngProblems(icon('android-chrome-192x192.png'), 192), []);
+    assert.deepEqual(pngProblems(icon('android-chrome-512x512.png'), 512), []);
 });
 
 test('the committed footer.json has no problems', () => {
